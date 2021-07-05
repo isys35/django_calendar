@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import MyUser
-from api.serizlizers import RegistrationUserSerializer, LoginUserSerializer
+from api.serializers import RegistrationUserSerializer, LoginUserSerializer
 
 
 class RegistrationView(APIView):
