@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from django.contrib.auth import authenticate, login
 from rest_framework import status
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -48,4 +51,27 @@ class CreateEventView(APIView):
         serializer.is_valid(raise_exception=True)
         event = UserEvent(**serializer.data)
         event.user = request.user
+        event.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class EventsDayView(ListAPIView):
+    queryset = UserEvent.objects
+    serializer_class = EventUserSerializer
+    authentication_classes = [BasicAuthentication]
+
+    def list(self, request, year, month, day, **kwargs):
+        queryset = self.queryset.filter(start_event__day=day,
+                                        start_event__month=month,
+                                        start_event__year=year)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EventsMonthView(EventsDayView):
+
+    def list(self, request, year, month, **kwargs):
+        queryset = self.queryset.filter(start_event__month=month,
+                                        start_event__year=year)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
