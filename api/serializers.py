@@ -19,7 +19,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
         fields = ['email', 'password']
 
 
-class EventUserSerializer(serializers.ModelSerializer):
+class CreateEventUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserEvent
         fields = ['title', 'start_event', 'end_event', 'notification']
@@ -31,4 +31,4 @@ class EventUserSerializer(serializers.ModelSerializer):
             datetime_end = datetime_start.replace(hour=23, minute=59)
             data['end_event'] = datetime_end.strftime("%Y-%m-%dT%H:%M")
             data._mutable = False
-        return super(EventUserSerializer, self). to_internal_value(data)
+        return super(CreateEventUserSerializer, self).to_internal_value(data)

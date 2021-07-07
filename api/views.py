@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib.auth import authenticate, login
 from rest_framework import status
 from rest_framework.authentication import BasicAuthentication
@@ -10,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import MyUser, UserEvent
-from api.serializers import RegistrationUserSerializer, LoginUserSerializer, EventUserSerializer
+from api.serializers import RegistrationUserSerializer, LoginUserSerializer, CreateEventUserSerializer
 
 
 class RegistrationView(APIView):
@@ -43,7 +41,7 @@ class LoginView(APIView):
 
 
 class CreateEventView(APIView):
-    serializer_class = EventUserSerializer
+    serializer_class = CreateEventUserSerializer
     authentication_classes = [BasicAuthentication]
 
     def post(self, request):
@@ -57,7 +55,7 @@ class CreateEventView(APIView):
 
 class EventsDayView(ListAPIView):
     queryset = UserEvent.objects
-    serializer_class = EventUserSerializer
+    serializer_class = CreateEventUserSerializer
     authentication_classes = [BasicAuthentication]
 
     def list(self, request, year, month, day, **kwargs):
