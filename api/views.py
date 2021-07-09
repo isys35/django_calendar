@@ -42,7 +42,6 @@ class LoginView(APIView):
 
 class CreateEventView(APIView):
     serializer_class = CreateEventUserSerializer
-    authentication_classes = [BasicAuthentication]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -56,7 +55,6 @@ class CreateEventView(APIView):
 class EventsDayView(ListAPIView):
     queryset = UserEvent.objects
     serializer_class = CreateEventUserSerializer
-    authentication_classes = [BasicAuthentication]
 
     def list(self, request, year, month, day, **kwargs):
         queryset = self.queryset.filter(start_event__day=day,

@@ -2,6 +2,7 @@ from django.core.mail import send_mail
 
 from celery import shared_task
 
+# celery -A <mymodule> worker -l info -P eventlet
 # notification.apply_async(eta=datetime.utcnow() + timedelta(seconds=1))
 @shared_task
 def notification():
