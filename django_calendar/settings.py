@@ -83,7 +83,7 @@ DATABASES = {
         'USER': 'myuser',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': 5434,
+        'PORT': 5432,
     }
 }
 
@@ -157,4 +157,4 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
