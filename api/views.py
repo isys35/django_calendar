@@ -1,11 +1,14 @@
 from django.contrib.auth import authenticate, login
+from datetime import datetime
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.tasks import notification
 from api.models import MyUser, UserEvent
 from api.serializers import RegistrationUserSerializer, LoginUserSerializer, CreateEventUserSerializer
 
@@ -41,6 +44,8 @@ class LoginView(APIView):
 
 class CreateEventView(APIView):
     serializer_class = CreateEventUserSerializer
+    # Todo: delete auth
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -48,6 +53,8 @@ class CreateEventView(APIView):
         event = UserEvent(**serializer.data)
         event.user = request.user
         event.save()
+        if event.notification:
+            notification.apply_async((event,), eta=datetime.utcnow() - event.notification)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
