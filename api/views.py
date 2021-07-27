@@ -54,7 +54,7 @@ class CreateEventView(APIView):
         event.user = request.user
         event.save()
         if event.notification:
-            notification.apply_async((event,), eta=datetime.utcnow() - event.notification)
+            notification.apply_async((event.user.email, event.title, event.start_event, event.end_event), eta=datetime.utcnow() - event.notification)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
