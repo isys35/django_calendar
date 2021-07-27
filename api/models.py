@@ -5,9 +5,16 @@ from datetime import timedelta
 from api.managers import UserManager
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=40)
+
+
 class MyUser(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL,
+                                verbose_name='Страна',
+                                related_name='users', default=None, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
