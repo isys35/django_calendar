@@ -4,7 +4,6 @@ from django.core.mail import send_mail
 from celery import shared_task
 
 
-
 # celery -A <mymodule> worker -l info -P eventlet
 
 @shared_task
