@@ -9,8 +9,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.tasks import notification
-from api.models import MyUser, UserEvent
-from api.serializers import RegistrationUserSerializer, LoginUserSerializer, CreateEventUserSerializer
+from api.models import MyUser, UserEvent, CountryHoliday
+from api.serializers import RegistrationUserSerializer, LoginUserSerializer, CreateEventUserSerializer, \
+    HolidaysSerializer
 
 
 class RegistrationView(APIView):
@@ -20,7 +21,7 @@ class RegistrationView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = MyUser(email=request.data['email'])
+        user = MyUser(email=request.data['email'], country_id=request.data['country'])
         user.set_password(request.data['password'])
         user.save()
         token = Token.objects.create(user=user)
@@ -45,7 +46,7 @@ class LoginView(APIView):
 class CreateEventView(APIView):
     serializer_class = CreateEventUserSerializer
     # Todo: delete auth
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    # authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -75,5 +76,16 @@ class EventsMonthView(EventsDayView):
     def list(self, request, year, month, **kwargs):
         queryset = self.queryset.filter(start_event__month=month,
                                         start_event__year=year)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class HolidaysMonthView(ListAPIView):
+    queryset = CountryHoliday.objects
+    serializer_class = HolidaysSerializer
+
+    def list(self, request, year, month):
+        queryset = self.queryset.filter(date__month=month,
+                                        date__year=year, country_id=request.user.country_id)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

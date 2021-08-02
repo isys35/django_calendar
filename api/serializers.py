@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from datetime import datetime
 
-from api.models import MyUser, UserEvent
+from api.models import MyUser, UserEvent, CountryHoliday
 
 
 class RegistrationUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['email', 'password']
+        fields = ['email', 'password', 'country']
         write_only_fields = ['password']
 
 
@@ -32,3 +32,9 @@ class CreateEventUserSerializer(serializers.ModelSerializer):
             data['end_event'] = datetime_end.strftime("%Y-%m-%dT%H:%M")
             data._mutable = False
         return super(CreateEventUserSerializer, self).to_internal_value(data)
+
+
+class HolidaysSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CountryHoliday
+        fields = ['country_id', 'holiday_id', 'date']

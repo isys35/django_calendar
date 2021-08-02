@@ -9,4 +9,5 @@ urlpatterns = [
     path('create-event/', views.CreateEventView.as_view(), name='crate_event'),
     path('events/<int:year>/<int:month>/<int:day>/', views.EventsDayView.as_view(), name='day_events'),
     path('events/<int:year>/<int:month>/', views.EventsMonthView.as_view(), name='month_events'),
+    path('holidays/<int:year>/<int:month>/', views.HolidaysMonthView.as_view(), name='month_holidays'),
 ]
