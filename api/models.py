@@ -6,11 +6,11 @@ from api.managers import UserManager
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=40, db_index=True)
+    name = models.CharField(max_length=40, db_index=True, unique=True, primary_key=True)
 
 
 class Holiday(models.Model):
-    name = models.CharField(max_length=200, db_index=True, unique=True)
+    name = models.CharField(max_length=200, db_index=True, unique=True, primary_key=True)
     countries = models.ManyToManyField(Country, related_name='holidays', through="CountryHoliday")
 
 
