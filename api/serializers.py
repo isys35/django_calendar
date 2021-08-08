@@ -1,3 +1,4 @@
+from django_celery_beat.models import IntervalSchedule
 from rest_framework import serializers
 from datetime import datetime
 
@@ -38,3 +39,9 @@ class HolidaysSerializer(serializers.ModelSerializer):
     class Meta:
         model = CountryHoliday
         fields = ['country_id', 'holiday_id', 'date']
+
+
+class UpdaterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IntervalSchedule
+        fields = ['every', 'period']

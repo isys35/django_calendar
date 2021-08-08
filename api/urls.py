@@ -10,4 +10,5 @@ urlpatterns = [
     path('events/<int:year>/<int:month>/<int:day>/', views.EventsDayView.as_view(), name='day_events'),
     path('events/<int:year>/<int:month>/', views.EventsMonthView.as_view(), name='month_events'),
     path('holidays/<int:year>/<int:month>/', views.HolidaysMonthView.as_view(), name='month_holidays'),
+    path('create_updater/', views.IntervalUpdate.as_view(), name='interval_update'),
 ]

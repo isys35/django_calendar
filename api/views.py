@@ -1,17 +1,18 @@
 from django.contrib.auth import authenticate, login
 from datetime import datetime
+
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.tasks import notification
 from api.models import MyUser, UserEvent, CountryHoliday
 from api.serializers import RegistrationUserSerializer, LoginUserSerializer, CreateEventUserSerializer, \
-    HolidaysSerializer
+    HolidaysSerializer, UpdaterSerializer
 
 
 class RegistrationView(APIView):
@@ -21,7 +22,10 @@ class RegistrationView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = MyUser(email=request.data['email'], country_id=request.data['country'])
+        if 'country' in request.data:
+            user = MyUser(email=request.data['email'], country_id=request.data['country'])
+        else:
+            user = MyUser(email=request.data['email'])
         user.set_password(request.data['password'])
         user.save()
         token = Token.objects.create(user=user)
@@ -45,6 +49,7 @@ class LoginView(APIView):
 
 class CreateEventView(APIView):
     serializer_class = CreateEventUserSerializer
+
     # Todo: delete auth
     # authentication_classes = [BasicAuthentication, SessionAuthentication]
 
@@ -55,7 +60,8 @@ class CreateEventView(APIView):
         event.user = request.user
         event.save()
         if event.notification:
-            notification.apply_async((event.user.email, event.title, event.start_event, event.end_event), eta=datetime.utcnow() - event.notification)
+            notification.apply_async((event.user.email, event.title, event.start_event, event.end_event),
+                                     eta=datetime.utcnow() - event.notification)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -89,3 +95,20 @@ class HolidaysMonthView(ListAPIView):
                                         date__year=year, country_id=request.user.country_id)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IntervalUpdate(APIView):
+    serializer_class = UpdaterSerializer
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        PeriodicTask.objects.create(
+            name='Update countries and holidays',
+            task='update_countries_holidays',
+            interval=IntervalSchedule.objects.get_or_create(every=serializer.data['every'],
+                                                            period=serializer.data['period'])[0],
+            start_time=datetime.now(),
+        )
+        return Response({"status": True}, status=status.HTTP_201_CREATED)
