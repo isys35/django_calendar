@@ -80,10 +80,10 @@ WSGI_APPLICATION = 'django_calendar.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mydb',
-        'USER': 'myuser',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',
         'PORT': 5432,
     }
 }
@@ -155,8 +155,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/'
+CELERY_BROKER_URL = 'redis://redis:6379/'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/'
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST_USER = 'djangocalendartest@gmail.com'
