@@ -16,6 +16,9 @@ from api.serializers import RegistrationUserSerializer, LoginUserSerializer, Cre
 
 
 class RegistrationView(APIView):
+    """
+    Регистрация
+    """
     serializer_class = RegistrationUserSerializer
     permission_classes = [AllowAny]
 
@@ -33,6 +36,9 @@ class RegistrationView(APIView):
 
 
 class LoginView(APIView):
+    """
+    Логин
+    """
     serializer_class = LoginUserSerializer
     permission_classes = [AllowAny]
 
@@ -48,10 +54,10 @@ class LoginView(APIView):
 
 
 class CreateEventView(APIView):
+    """
+    Создать событие
+    """
     serializer_class = CreateEventUserSerializer
-
-    # Todo: delete auth
-    # authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -66,6 +72,9 @@ class CreateEventView(APIView):
 
 
 class EventsDayView(ListAPIView):
+    """
+    Список событий за день
+    """
     queryset = UserEvent.objects
     serializer_class = CreateEventUserSerializer
 
@@ -78,7 +87,9 @@ class EventsDayView(ListAPIView):
 
 
 class EventsMonthView(EventsDayView):
-
+    """
+    Список событий за месяц
+    """
     def list(self, request, year, month, **kwargs):
         queryset = self.queryset.filter(start_event__month=month,
                                         start_event__year=year)
@@ -87,6 +98,9 @@ class EventsMonthView(EventsDayView):
 
 
 class HolidaysMonthView(ListAPIView):
+    """
+    Список праздников за месяц
+    """
     queryset = CountryHoliday.objects
     serializer_class = HolidaysSerializer
 
@@ -98,6 +112,9 @@ class HolidaysMonthView(ListAPIView):
 
 
 class IntervalUpdate(APIView):
+    """
+    Обновление праздников и стран
+    """
     serializer_class = UpdaterSerializer
     permission_classes = [IsAdminUser]
 
