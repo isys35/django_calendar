@@ -1,3 +1,5 @@
+![GitHub last commit](https://img.shields.io/github/last-commit/isys35/django_calendar)
+
 ## **Задание для BELHARD "Календарь API"**
 # Docker установка
 ```
